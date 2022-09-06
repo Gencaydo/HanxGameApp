@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32616.157
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HanxGame.Core", "HanxGame.Core\HanxGame.Core.csproj", "{AD7193AB-0BD9-43C3-A9E8-F133B308E55B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HanxGame.Repository", "HanxGame.Repository\HanxGame.Repository.csproj", "{D9621D52-8BF5-4417-BC55-47456E6CB00F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HanxGame.Service", "HanxGame.Service\HanxGame.Service.csproj", "{0468AA83-DC52-4CB2-A100-38C6EE0BA342}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HanxGame.API", "HanxGame.API\HanxGame.API.csproj", "{8AFAA90B-524F-4BBC-939B-92C79C915848}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HanxGame.Caching", "HanxGame.Caching\HanxGame.Caching.csproj", "{34A92F3B-C178-442D-ACB5-BE73071C7E6E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AD7193AB-0BD9-43C3-A9E8-F133B308E55B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD7193AB-0BD9-43C3-A9E8-F133B308E55B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD7193AB-0BD9-43C3-A9E8-F133B308E55B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD7193AB-0BD9-43C3-A9E8-F133B308E55B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9621D52-8BF5-4417-BC55-47456E6CB00F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9621D52-8BF5-4417-BC55-47456E6CB00F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9621D52-8BF5-4417-BC55-47456E6CB00F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9621D52-8BF5-4417-BC55-47456E6CB00F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0468AA83-DC52-4CB2-A100-38C6EE0BA342}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0468AA83-DC52-4CB2-A100-38C6EE0BA342}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0468AA83-DC52-4CB2-A100-38C6EE0BA342}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0468AA83-DC52-4CB2-A100-38C6EE0BA342}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AFAA90B-524F-4BBC-939B-92C79C915848}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AFAA90B-524F-4BBC-939B-92C79C915848}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AFAA90B-524F-4BBC-939B-92C79C915848}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AFAA90B-524F-4BBC-939B-92C79C915848}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34A92F3B-C178-442D-ACB5-BE73071C7E6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34A92F3B-C178-442D-ACB5-BE73071C7E6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34A92F3B-C178-442D-ACB5-BE73071C7E6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34A92F3B-C178-442D-ACB5-BE73071C7E6E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DE74DB69-1F17-4905-B3BE-17BC850E2055}
+	EndGlobalSection
+EndGlobal
