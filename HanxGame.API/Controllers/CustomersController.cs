@@ -68,6 +68,10 @@ namespace HanxGame.API.Controllers
                                                       + "','"
                                                       + customerDto.AddressLine2
                                                       + "','"
+                                                      + customerDto.MobilePhoneNumber
+                                                      + "','"
+                                                      + customerDto.PhoneNumber
+                                                      + "','"
                                                       + customerDto.Town
                                                       + "','"
                                                       + customerDto.State

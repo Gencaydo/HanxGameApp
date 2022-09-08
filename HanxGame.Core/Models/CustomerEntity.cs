@@ -12,6 +12,8 @@ namespace HanxGame.Core.Models
         public string? Description { get; set; }
         public string? AddressLine1 { get; set; }
         public string? AddressLine2 { get; set; }
+        public string? MobilePhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
         public string? Town { get; set; }
         public string? State { get; set; }
         public int PostCode { get; set; }

@@ -15,7 +15,6 @@ namespace HanxGame.Service.Validations
             RuleFor(x => x.Name).NotNull().WithMessage("{PropertyName} is required").NotEmpty().WithMessage("{PropertyName} is required");
             RuleFor(x => x.Email).NotNull().WithMessage("{PropertyName} is required").NotEmpty().WithMessage("{PropertyName} is required");
             RuleFor(x => x.AddressLine1).NotNull().WithMessage("{PropertyName} is required").NotEmpty().WithMessage("{PropertyName} is required");
-            RuleFor(x => x.StatusId).InclusiveBetween(1, int.MaxValue).WithMessage("{PropertyName} must be greater 0");
         }
     }
 }

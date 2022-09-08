@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,5 +23,12 @@ namespace HanxGame.Repository
         public DbSet<SupplierEntity> Suppliers { get; set; }
         public DbSet<StatusEntity> Status { get; set; }
         public IDbConnection Connection => Database.GetDbConnection();
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            base.OnModelCreating(modelBuilder);
+        }
+
     }
 }
