@@ -108,21 +108,38 @@ namespace HanxGame.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateCustomer(CustomerDto CustomerDto)
+        public async Task<IActionResult> UpdateCustomer(CustomerDto customerDto)
         {
+            bool ınfochanged = false;
+            bool namechanged = false;
             try
             {
-                string updatequery = "UPDATE CUSTOMERS SET STATUSID = 3, " +
-                                                          "NAME = '" + CustomerDto.Name + "', " +
-                                                          "UPDATEUSERID = '" + CustomerDto.UpdateUserId + "', " +
-                                                          "UPDATEDATE = GETDATE() " +
-                                                          "WHERE id = " + CustomerDto.Id;
+                string selectquery = "SELECT * FROM CUSTOMERS WHERE ID = @ID";
 
-                var result = await applicationReadDbService.QueryAsync<CustomerDto>(updatequery);
+                var exist = await applicationReadDbService.QueryAsync<CustomerDto>(selectquery, new CustomerDto { Id = customerDto.Id });
+
+                if (exist.Where(x => x.Email != customerDto.Email).Count() > 0 || exist.Where(x => x.Description != customerDto.Description).Count() > 0) ınfochanged = true;
+
+                string selectquery1 = "SELECT * FROM CUSTOMERS WHERE NAME = @NAME";
+
+                var exist1 = await applicationReadDbService.QueryAsync<CustomerDto>(selectquery1, new CustomerDto { Name = customerDto.Name });
+
+                if (exist1.Count() == 0) namechanged = true;
+
+                if (!ınfochanged) return CreateActionResult(CustomResponseDto<NoContentDto>.Fail(302, "Dont Change Nothing, Please Check!"));
+                if (!namechanged) return CreateActionResult(CustomResponseDto<NoContentDto>.Fail(302, "Same Name Found, Please Check!"));
+
+                string updatequery = "UPDATE CUSTOMERS SET STATUSID = 3, NAME=@NAME, EMAIL=@EMAIL, DESCRIPTION=@DESCRIPTION, UPDATEUSERID=@UPDATEUSERID, UPDATEDATE=GETDATE() WHERE ID=@ID";
+
+                var result = await applicationReadDbService.QueryAsync<CustomerDto>(updatequery, new CustomerDto { Id = customerDto.Id,
+                                                                                                                   Name = customerDto.Name, 
+                                                                                                                   Email = customerDto.Email,
+                                                                                                                   Description = customerDto.Description,
+                                                                                                                   UpdateUserId = customerDto.UpdateUserId});
 
                 if (result == null)
                 {
-                    return CreateActionResult(CustomResponseDto<NoContentDto>.Fail(404, "Remove Query Executed Error"));
+                    return CreateActionResult(CustomResponseDto<NoContentDto>.Fail(404, "Update Query Executed Error"));
                 }
 
                 return CreateActionResult(CustomResponseDto<NoContentDto>.Success(200));
