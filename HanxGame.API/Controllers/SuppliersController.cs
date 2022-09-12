@@ -25,7 +25,7 @@ namespace HanxGame.API.Controllers
         {
             try
             {
-                string query = "SELECT * FROM SUPPLIERS WHERE STATUSID IN (1,3)";
+                string query = "SELECT a.ID,a.NAME,a.EMAIL,a.GAMEID,b.NAME as GAMENAME,a.BUYINGPRICE,a.SELLINGPRICE,a.CREATEDATE,a.UPDATEDATE FROM SUPPLIERS a,GAMES b WHERE a.GAMEID = b.ID AND a.STATUSID IN (1,3)";
 
                 var result = await applicationReadDbService.QueryAsync<SupplierDto>(query);
 
@@ -56,7 +56,7 @@ namespace HanxGame.API.Controllers
                 if (exist.Where(x => x.Name == supplierDto.Name).Count() > 0) return CreateActionResult(CustomResponseDto<NoContentDto>.Fail(302, "Same Game Exist for Supplier, Please Check!"));
 
 
-                string insertquery = "INSERT INTO SUPPLIERS VALUES (@NAME,@EMAIL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,0,@BUYINGPRICE,@SELLINGPRICE,@GAMEID,1,@CREATEUSERID,CONVERT(VARCHAR, GETDATE(), 120),NULL,CONVERT(VARCHAR, GETDATE(), 120))";
+                string insertquery = "INSERT INTO SUPPLIERS VALUES (@NAME,@Email,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,0,@BuyingPrice,@SellingPrice,@GAMEID,1,@CREATEUSERID,CONVERT(VARCHAR, GETDATE(), 120),NULL,CONVERT(VARCHAR, GETDATE(), 120))";
 
                 var result = await applicationWriteDbService.ExecuteAsync(insertquery, new SupplierDto { Name = supplierDto.Name, 
                                                                                                          Email = supplierDto.Email,

@@ -66,18 +66,13 @@ namespace HanxGame.API.Controllers
                 if (exist.Where(x => x.Name == gameDto.Name).Count() > 0) return CreateActionResult(CustomResponseDto<NoContentDto>.Fail(302, "Same Game Name Found, Please Check!"));
 
 
-                string insertquery = "INSERT INTO GAMES VALUES ('" + gameDto.Name 
-                                                      + "',1," 
-                                                      + gameDto.DefaultBuyingPrice.ToString().Replace(',', '.') 
-                                                      + "," 
-                                                      + gameDto.DefaultSellingPrice.ToString().Replace(',', '.') 
-                                                      + ",NULL," 
-                                                      + gameDto.KeyTypeId 
-                                                      + ",1,'"//StatusID set Active 
-                                                      + gameDto.CreateUserId 
-                                                      + "',CONVERT(VARCHAR, GETDATE(), 120),NULL,CONVERT(VARCHAR, GETDATE(), 120))";
+                string insertquery = "INSERT INTO GAMES VALUES (@NAME,0,@DefaultBuyingPrice,@DefaultSellingPrice,NULL,@KEYTYPEID,1,@CREATEUSERID,CONVERT(VARCHAR, GETDATE(), 120),NULL,CONVERT(VARCHAR, GETDATE(), 120))";
 
-                var result = await applicationWriteDbService.ExecuteAsync(insertquery);
+                var result = await applicationWriteDbService.ExecuteAsync(insertquery,new GameDto { Name = gameDto.Name,
+                                                                                                    DefaultBuyingPrice = gameDto.DefaultBuyingPrice,
+                                                                                                    DefaultSellingPrice = gameDto.DefaultSellingPrice,
+                                                                                                    KeyTypeId = gameDto.KeyTypeId,
+                                                                                                    CreateUserId = gameDto.CreateUserId});
 
                 if (result == 0)
                 {
@@ -115,14 +110,13 @@ namespace HanxGame.API.Controllers
                 if (!namechanged) return CreateActionResult(CustomResponseDto<NoContentDto>.Fail(302, "Same Name Found, Please Check!"));
 
 
-                string query = "UPDATE GAMES SET STATUSID = 3, " +
-                                                 "NAME = '" + gameDto.Name + "', " +
-                                                 "DEFAULTBUYINGPRICE = " + gameDto.DefaultBuyingPrice.ToString().Replace(',', '.') + "," +
-                                                 "DEFAULTSELLINGPRICE = " + gameDto.DefaultSellingPrice.ToString().Replace(',', '.') + "," +
-                                                 "UPDATEUSERID = '" + gameDto.UpdateUserId + "', " +
-                                                 "UPDATEDATE = GETDATE() WHERE id = " + gameDto.Id;
+                string query = "UPDATE GAMES SET STATUSID = 3,NAME=@NAME,DEFAULTBUYINGPRICE=@DefaultBuyingPrice,DEFAULTSELLINGPRICE=@DefaultSellingPrice,UPDATEUSERID=@UPDATEUSERID,UPDATEDATE = GETDATE() WHERE ID=@ID";
 
-                var result = await applicationReadDbService.QueryAsync<GameDto>(query);
+                var result = await applicationReadDbService.QueryAsync<GameDto>(query,new GameDto { Name= gameDto.Name,
+                                                                                                    DefaultBuyingPrice = gameDto.DefaultBuyingPrice,
+                                                                                                    DefaultSellingPrice = gameDto.DefaultSellingPrice,
+                                                                                                    UpdateUserId = gameDto.UpdateUserId,
+                                                                                                    Id = gameDto.Id});
 
                 if (result == null)
                 {
@@ -142,11 +136,10 @@ namespace HanxGame.API.Controllers
         {
             try
             {
-                string query = "UPDATE GAMES SET STATUSID = 4, " +
-                                                 "UPDATEUSERID = '" + gameDto.UpdateUserId + "', " +
-                                                 "UPDATEDATE = GETDATE() WHERE id = " + gameDto.Id;
+                string query = "UPDATE GAMES SET STATUSID = 4,UPDATEUSERID=@UPDATEUSERID,UPDATEDATE = GETDATE() WHERE ID=@ID";
 
-                var result = await applicationReadDbService.QueryAsync<GameDto>(query);
+                var result = await applicationReadDbService.QueryAsync<GameDto>(query,new GameDto { UpdateUserId = gameDto.UpdateUserId,
+                                                                                                    Id = gameDto.Id});
 
                 if (result == null)
                 {

@@ -23,6 +23,7 @@ namespace HanxGame.Core.DTOs
         public decimal BuyingPrice { get; set; }
         public decimal SellingPrice { get; set; }
         public int GameId { get; set; }
+        public string? GameName { get; set; }
         public int StatusId { get; set; }
     }
 }
