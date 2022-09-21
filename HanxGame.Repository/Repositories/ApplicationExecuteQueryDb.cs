@@ -6,10 +6,10 @@ using System.Data;
 
 namespace HanxGame.Repository.Repositories
 {
-    public class ApplicationReadDb : IApplicationReadDb, IDisposable
+    public class ApplicationExecuteQueryDb : IApplicationExecuteQueryDb, IDisposable
     {
         private readonly IDbConnection connection;
-        public ApplicationReadDb(IConfiguration configuration)
+        public ApplicationExecuteQueryDb(IConfiguration configuration)
         {
             connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
         }

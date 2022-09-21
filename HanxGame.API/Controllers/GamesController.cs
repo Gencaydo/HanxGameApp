@@ -12,14 +12,12 @@ namespace HanxGame.API.Controllers
     public class GamesController : CustomBaseController
     {
         private readonly IMapper mapper;
-        private readonly IApplicationReadDbService applicationReadDbService;
-        private readonly IApplicationWriteDbService applicationWriteDbService;
+        private readonly IApplicationExecuteQueryDbService applicationExecuteQueryDbService;
 
-        public GamesController(IApplicationReadDbService applicationReadDbService, IApplicationWriteDbService applicationWriteDbService, IMapper mapper)
+        public GamesController(IApplicationExecuteQueryDbService applicationExecuteQueryDbService, IMapper mapper)
         {
             this.mapper = mapper;
-            this.applicationReadDbService = applicationReadDbService;
-            this.applicationWriteDbService = applicationWriteDbService;
+            this.applicationExecuteQueryDbService = applicationExecuteQueryDbService;
         }
         [HttpPost]
         public async Task<IActionResult> GetAllGames(GameDto gameDto)
@@ -28,14 +26,14 @@ namespace HanxGame.API.Controllers
             {
                 string query = "SELECT * FROM GAMES WHERE STATUSID IN (@STATUSID)";
 
-                var result = await applicationReadDbService.QueryAsync<GameDto>(query,new GameDto { StatusId = 1 });
+                var result = await applicationExecuteQueryDbService.QueryAsync<GameDto>(query,new GameDto { StatusId = 1 });
 
                 if (result == null)
                 {
                     return CreateActionResult(CustomResponseDto<NoContentDto>.Fail(404, "Select Query Result Not Found any Data"));
                 }
 
-                var result1 = await applicationReadDbService.QueryAsync<GameDto>(query, new GameDto { StatusId = 3 });
+                var result1 = await applicationExecuteQueryDbService.QueryAsync<GameDto>(query, new GameDto { StatusId = 3 });
 
                 if (result1 == null)
                 {
@@ -60,7 +58,7 @@ namespace HanxGame.API.Controllers
             {
                 string selectquery = "SELECT * FROM GAMES WHERE NAME = @NAME";
 
-                var exist = await applicationReadDbService.QueryAsync<GameDto>(selectquery, new GameDto { Name = gameDto.Name });
+                var exist = await applicationExecuteQueryDbService.QueryAsync<GameDto>(selectquery, new GameDto { Name = gameDto.Name });
 
 
                 if (exist.Where(x => x.Name == gameDto.Name).Count() > 0) return CreateActionResult(CustomResponseDto<NoContentDto>.Fail(302, "Same Game Name Found, Please Check!"));
@@ -68,13 +66,13 @@ namespace HanxGame.API.Controllers
 
                 string insertquery = "INSERT INTO GAMES VALUES (@NAME,0,@DefaultBuyingPrice,@DefaultSellingPrice,NULL,@KEYTYPEID,1,@CREATEUSERID,CONVERT(VARCHAR, GETDATE(), 120),NULL,CONVERT(VARCHAR, GETDATE(), 120))";
 
-                var result = await applicationWriteDbService.ExecuteAsync(insertquery,new GameDto { Name = gameDto.Name,
+                var result = await applicationExecuteQueryDbService.QueryAsync<GameDto>(insertquery,new GameDto { Name = gameDto.Name,
                                                                                                     DefaultBuyingPrice = gameDto.DefaultBuyingPrice,
                                                                                                     DefaultSellingPrice = gameDto.DefaultSellingPrice,
                                                                                                     KeyTypeId = gameDto.KeyTypeId,
                                                                                                     CreateUserId = gameDto.CreateUserId});
 
-                if (result == 0)
+                if (result == null)
                 {
                     return CreateActionResult(CustomResponseDto<NoContentDto>.Fail(404, "Insert Query Executed Error"));
                 }
@@ -96,13 +94,13 @@ namespace HanxGame.API.Controllers
             {
                 string selectquery = "SELECT * FROM GAMES WHERE ID = @Id";
 
-                var exist = await applicationReadDbService.QueryAsync<GameDto>(selectquery,new GameDto { Id = gameDto.Id });
+                var exist = await applicationExecuteQueryDbService.QueryAsync<GameDto>(selectquery,new GameDto { Id = gameDto.Id });
 
                 if (exist.Where(x => x.DefaultBuyingPrice != gameDto.DefaultBuyingPrice).Count() > 0 || exist.Where(x => x.DefaultSellingPrice != gameDto.DefaultSellingPrice).Count() > 0) pricechanged = true;
 
                 string selectquery1 = "SELECT * FROM GAMES WHERE NAME = @NAME";
 
-                var exist1 = await applicationReadDbService.QueryAsync<GameDto>(selectquery1, new GameDto { Name = gameDto.Name });
+                var exist1 = await applicationExecuteQueryDbService.QueryAsync<GameDto>(selectquery1, new GameDto { Name = gameDto.Name });
 
                 if (exist1.Count() == 0) namechanged = true;
 
@@ -112,7 +110,7 @@ namespace HanxGame.API.Controllers
 
                 string query = "UPDATE GAMES SET STATUSID = 3,NAME=@NAME,DEFAULTBUYINGPRICE=@DefaultBuyingPrice,DEFAULTSELLINGPRICE=@DefaultSellingPrice,UPDATEUSERID=@UPDATEUSERID,UPDATEDATE = GETDATE() WHERE ID=@ID";
 
-                var result = await applicationReadDbService.QueryAsync<GameDto>(query,new GameDto { Name= gameDto.Name,
+                var result = await applicationExecuteQueryDbService.QueryAsync<GameDto>(query,new GameDto { Name= gameDto.Name,
                                                                                                     DefaultBuyingPrice = gameDto.DefaultBuyingPrice,
                                                                                                     DefaultSellingPrice = gameDto.DefaultSellingPrice,
                                                                                                     UpdateUserId = gameDto.UpdateUserId,
@@ -138,8 +136,8 @@ namespace HanxGame.API.Controllers
             {
                 string query = "UPDATE GAMES SET STATUSID = 4,UPDATEUSERID=@UPDATEUSERID,UPDATEDATE = GETDATE() WHERE ID=@ID";
 
-                var result = await applicationReadDbService.QueryAsync<GameDto>(query,new GameDto { UpdateUserId = gameDto.UpdateUserId,
-                                                                                                    Id = gameDto.Id});
+                var result = await applicationExecuteQueryDbService.QueryAsync<GameDto>(query,new GameDto { UpdateUserId = gameDto.UpdateUserId,
+                                                                                                            Id = gameDto.Id});
 
                 if (result == null)
                 {

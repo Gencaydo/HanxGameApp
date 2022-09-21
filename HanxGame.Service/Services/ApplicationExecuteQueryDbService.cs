@@ -10,30 +10,30 @@ using System.Threading.Tasks;
 
 namespace HanxGame.Service.Services
 {
-    public class ApplicationReadDbService : IApplicationReadDbService
+    public class ApplicationExecuteQueryDbService : IApplicationExecuteQueryDbService
     {
         private readonly IApplicationDbContext applicationDbContext;
-        private readonly IApplicationReadDb applicationReadDb;
+        private readonly IApplicationExecuteQueryDb applicationExecuteQueryDb;
 
-        public ApplicationReadDbService(IApplicationDbContext applicationDbContext, IApplicationReadDb applicationReadDb)
+        public ApplicationExecuteQueryDbService(IApplicationDbContext applicationDbContext, IApplicationExecuteQueryDb applicationReadDb)
         {
             this.applicationDbContext = applicationDbContext;
-            this.applicationReadDb = applicationReadDb;
+            this.applicationExecuteQueryDb = applicationReadDb;
         }
 
         public async Task<IReadOnlyList<T>> QueryAsync<T>(string sql, object param = null, IDbTransaction transaction = null, CancellationToken cancellationToken = default)
         {
-            return (await applicationReadDb.QueryAsync<T>(sql, param, transaction)).AsList();
+            return (await applicationExecuteQueryDb.QueryAsync<T>(sql, param, transaction)).AsList();
         }
 
         public async Task<T> QueryFirstOrDefaultAsync<T>(string sql, object param = null, IDbTransaction transaction = null, CancellationToken cancellationToken = default)
         {
-            return await applicationReadDb.QueryFirstOrDefaultAsync<T>(sql, param, transaction);
+            return await applicationExecuteQueryDb.QueryFirstOrDefaultAsync<T>(sql, param, transaction);
         }
 
         public async Task<T> QuerySingleAsync<T>(string sql, object param = null, IDbTransaction transaction = null, CancellationToken cancellationToken = default)
         {
-            return await applicationReadDb.QuerySingleAsync<T>(sql, param, transaction);
+            return await applicationExecuteQueryDb.QuerySingleAsync<T>(sql, param, transaction);
         }
     }
 }

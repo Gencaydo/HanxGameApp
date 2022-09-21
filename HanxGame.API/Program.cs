@@ -29,10 +29,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
         );
 builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetService<AppDbContext>());
-builder.Services.AddScoped<IApplicationReadDb, ApplicationReadDb>();
-builder.Services.AddScoped<IApplicationReadDbService, ApplicationReadDbService>();
-builder.Services.AddScoped<IApplicationWriteDb, ApplicationWriteDb>();
-builder.Services.AddScoped<IApplicationWriteDbService, ApplicationWriteDbService>();
+builder.Services.AddScoped<IApplicationExecuteQueryDb, ApplicationExecuteQueryDb>();
+builder.Services.AddScoped<IApplicationExecuteQueryDbService, ApplicationExecuteQueryDbService>();
 builder.Services.AddAutoMapper(typeof(MapProfile));
 
 builder.Services.AddControllers().AddJsonOptions(options => {

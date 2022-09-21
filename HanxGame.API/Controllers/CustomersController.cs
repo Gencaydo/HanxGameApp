@@ -11,14 +11,12 @@ namespace HanxGame.API.Controllers
     public class CustomersController : CustomBaseController
     {
         private readonly IMapper mapper;
-        private readonly IApplicationReadDbService applicationReadDbService;
-        private readonly IApplicationWriteDbService applicationWriteDbService;
+        private readonly IApplicationExecuteQueryDbService applicationExecuteQueryDbService;
 
-        public CustomersController(IApplicationReadDbService applicationReadDbService, IApplicationWriteDbService applicationWriteDbService, IMapper mapper)
+        public CustomersController(IApplicationExecuteQueryDbService applicationExecuteQueryDbService, IMapper mapper)
         {
             this.mapper = mapper;
-            this.applicationReadDbService = applicationReadDbService;
-            this.applicationWriteDbService = applicationWriteDbService;
+            this.applicationExecuteQueryDbService = applicationExecuteQueryDbService;
         }
         [HttpPost]
         public async Task<IActionResult> GetAllCustomers(CustomerDto customerDto)
@@ -27,7 +25,7 @@ namespace HanxGame.API.Controllers
             {
                 string query = "SELECT * FROM CUSTOMERS WHERE STATUSID IN (1,3)";
 
-                var result = await applicationReadDbService.QueryAsync<CustomerDto>(query);
+                var result = await applicationExecuteQueryDbService.QueryAsync<CustomerDto>(query);
 
                 if (result == null)
                 {
@@ -50,7 +48,7 @@ namespace HanxGame.API.Controllers
             {
                 string selectquery = "SELECT * FROM CUSTOMERS WHERE NAME = '" + customerDto.Name + "'";
 
-                var exist = await applicationReadDbService.QueryAsync<CustomerDto>(selectquery);
+                var exist = await applicationExecuteQueryDbService.QueryAsync<CustomerDto>(selectquery);
 
                 if (exist.Count > 0)
                 {
@@ -58,43 +56,40 @@ namespace HanxGame.API.Controllers
                     else if (exist.Where(x => x.StatusId == 4).Count() > 0) return CreateActionResult(CustomResponseDto<NoContentDto>.Fail(302, "Same Customer Name Found but Status Deleted, Please Contant with IT!"));
                 }
 
-                string insertquery = "INSERT INTO CUSTOMERS VALUES ('" + customerDto.Name
-                                                      + "','" 
-                                                      + customerDto.Email
-                                                      + "','"
-                                                      + customerDto.Description
-                                                      + "','"
-                                                      + customerDto.AddressLine1
-                                                      + "','"
-                                                      + customerDto.AddressLine2
-                                                      + "','"
-                                                      + customerDto.MobilePhoneNumber
-                                                      + "','"
-                                                      + customerDto.PhoneNumber
-                                                      + "','"
-                                                      + customerDto.Town
-                                                      + "','"
-                                                      + customerDto.State
-                                                      + "'," 
-                                                      + customerDto.PostCode
-                                                      + ",'"
-                                                      + customerDto.Country
-                                                      + "','"
-                                                      + customerDto.IsBillingAddress
-                                                      + "','"
-                                                      + customerDto.ResponseUserId 
-                                                      + "',"
-                                                      + "1" //StatusID Set Active
-                                                      + ",'"
-                                                      + customerDto.CreateUserId
-                                                      + "',"
-                                                      + "CONVERT(VARCHAR, GETDATE(), 120)"
-                                                      + ",NULL"
-                                                      + ",CONVERT(VARCHAR, GETDATE(), 120))";
+                string insertquery = "INSERT INTO CUSTOMERS VALUES (@NAME," +
+                                                                   "@Email," +
+                                                                   "@Description," +
+                                                                   "@AddressLine1," +
+                                                                   "@AddressLine2," +
+                                                                   "@MobilePhoneNumber," +
+                                                                   "@PHONENUMBER," +
+                                                                   "@TOWN," +
+                                                                   "@STATE," +
+                                                                   "@POSTCODE," +
+                                                                   "@COUNTRY," +
+                                                                   "@IsBillingAddress," +
+                                                                   "NULL," +
+                                                                   "1," +
+                                                                   "@CREATEUSERID," +
+                                                                   "CONVERT(VARCHAR, GETDATE(), 120)," +
+                                                                   "NULL," +
+                                                                   "CONVERT(VARCHAR, GETDATE(), 120))";
 
-                var result = await applicationWriteDbService.ExecuteAsync(insertquery);
+                var result = await applicationExecuteQueryDbService.QueryAsync<CustomerDto>(insertquery, new CustomerDto { Name = customerDto.Name,
+                                                                                                                           Email = customerDto.Email,
+                                                                                                                           Description = customerDto.Description,
+                                                                                                                           AddressLine1 = customerDto.AddressLine1,
+                                                                                                                           AddressLine2 = customerDto.AddressLine2,
+                                                                                                                           MobilePhoneNumber = customerDto.MobilePhoneNumber,
+                                                                                                                           PhoneNumber = customerDto.PhoneNumber,
+                                                                                                                           Town = customerDto.Town,
+                                                                                                                           State = customerDto.State,
+                                                                                                                           PostCode = customerDto.PostCode,
+                                                                                                                           Country = customerDto.Country,
+                                                                                                                           IsBillingAddress = customerDto.IsBillingAddress,
+                                                                                                                           CreateUserId = customerDto.CreateUserId});
 
-                if (result == 0)
+                if (result == null)
                 {
                     return CreateActionResult(CustomResponseDto<NoContentDto>.Fail(404, "Insert Query Executed Error"));
                 }
@@ -116,26 +111,32 @@ namespace HanxGame.API.Controllers
             {
                 string selectquery = "SELECT * FROM CUSTOMERS WHERE ID = @ID";
 
-                var exist = await applicationReadDbService.QueryAsync<CustomerDto>(selectquery, new CustomerDto { Id = customerDto.Id });
+                var exist = await applicationExecuteQueryDbService.QueryAsync<CustomerDto>(selectquery, new CustomerDto { Id = customerDto.Id });
 
                 if (exist.Where(x => x.Email != customerDto.Email).Count() > 0 || exist.Where(x => x.Description != customerDto.Description).Count() > 0) ınfochanged = true;
 
                 string selectquery1 = "SELECT * FROM CUSTOMERS WHERE NAME = @NAME";
 
-                var exist1 = await applicationReadDbService.QueryAsync<CustomerDto>(selectquery1, new CustomerDto { Name = customerDto.Name });
+                var exist1 = await applicationExecuteQueryDbService.QueryAsync<CustomerDto>(selectquery1, new CustomerDto { Name = customerDto.Name });
 
                 if (exist1.Count() == 0) namechanged = true;
 
                 if (!ınfochanged) return CreateActionResult(CustomResponseDto<NoContentDto>.Fail(302, "Dont Change Nothing, Please Check!"));
                 if (!namechanged) return CreateActionResult(CustomResponseDto<NoContentDto>.Fail(302, "Same Name Found, Please Check!"));
 
-                string updatequery = "UPDATE CUSTOMERS SET STATUSID = 3, NAME=@NAME, EMAIL=@EMAIL, DESCRIPTION=@DESCRIPTION, UPDATEUSERID=@UPDATEUSERID, UPDATEDATE=GETDATE() WHERE ID=@ID";
+                string updatequery = "UPDATE CUSTOMERS SET STATUSID = 3, " +
+                                                          "NAME=@NAME, " +
+                                                          "EMAIL=@Email, " +
+                                                          "DESCRIPTION=@Description, " +
+                                                          "UPDATEUSERID=@UPDATEUSERID, " +
+                                                          "UPDATEDATE=GETDATE() " +
+                                                          "WHERE ID=@ID";
 
-                var result = await applicationReadDbService.QueryAsync<CustomerDto>(updatequery, new CustomerDto { Id = customerDto.Id,
-                                                                                                                   Name = customerDto.Name, 
-                                                                                                                   Email = customerDto.Email,
-                                                                                                                   Description = customerDto.Description,
-                                                                                                                   UpdateUserId = customerDto.UpdateUserId});
+                var result = await applicationExecuteQueryDbService.QueryAsync<CustomerDto>(updatequery, new CustomerDto { Id = customerDto.Id,
+                                                                                                                           Name = customerDto.Name, 
+                                                                                                                           Email = customerDto.Email,
+                                                                                                                           Description = customerDto.Description,
+                                                                                                                           UpdateUserId = customerDto.UpdateUserId});
 
                 if (result == null)
                 {
@@ -151,15 +152,17 @@ namespace HanxGame.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RemoveCustomer(CustomerDto CustomerDto)
+        public async Task<IActionResult> RemoveCustomer(CustomerDto customerDto)
         {
             try
             {
+                string removequery = "UPDATE CUSTOMERS SET STATUSID = 4," +
+                                                          "UPDATEUSERID=@UPDATEUSERID, " +
+                                                          "UPDATEDATE=GETDATE() " +
+                                                          "WHERE ID=@ID";
 
-
-                var result = await applicationReadDbService.QueryAsync<CustomerDto>("UPDATE CUSTOMERS SET STATUSID = 4, " +
-                                                                                    "UPDATEUSERID = '" + CustomerDto.UpdateUserId + "', " +
-                                                                                    "UPDATEDATE = GETDATE() WHERE id = " + CustomerDto.Id);
+                var result = await applicationExecuteQueryDbService.QueryAsync<CustomerDto>(removequery,new CustomerDto{Id = customerDto.Id,
+                                                                                                                        UpdateUserId = customerDto.UpdateUserId});
 
                 if (result == null)
                 {
